@@ -7,26 +7,23 @@ for ($i = 0; $i < ob_get_level(); $i++) {
 }
 ob_implicit_flush(1);
 
+// Base URL and path defines
 define('PHOTO_ARCHIVE_PATH', dirname(__FILE__));
-define('PHOTO_ARCHIVE_FOLDER', PHOTO_ARCHIVE_PATH.'/archive/');
-
 define('PHOTO_ARCHIVE_URL', (isset($_SERVER["HTTPS"]) ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].str_replace($_SERVER['DOCUMENT_ROOT'], '', realpath(__DIR__)).'/');
 define('PHOTO_ARCHIVE_AJAX', PHOTO_ARCHIVE_URL.'?ajax=true&');
-define('PHOTO_ARCHIVE_FOLDER_URL', PHOTO_ARCHIVE_URL.'archive/');
 
+// Load user settings
+require_once('user_settings.php');
+
+// Set folder locations
+define('PHOTO_ARCHIVE_FOLDER', PHOTO_ARCHIVE_PATH.'/'.PHOTO_ARCHIVE_DIR.'/');
+define('PHOTO_ARCHIVE_FOLDER_URL', PHOTO_ARCHIVE_URL.PHOTO_ARCHIVE_DIR.'/');
 define('PHOTO_ARCHIVE_IMAGES_URL', PHOTO_ARCHIVE_FOLDER_URL.'images');
 define('PHOTO_ARCHIVE_MID_URL', PHOTO_ARCHIVE_FOLDER_URL.'mid/');
 define('PHOTO_ARCHIVE_THUMB_URL', PHOTO_ARCHIVE_FOLDER_URL.'thumbs/');
-
 define('PHOTO_ARCHIVE_IMAGES_FOLDER', PHOTO_ARCHIVE_FOLDER.'images');
 define('PHOTO_ARCHIVE_MID_FOLDER', PHOTO_ARCHIVE_FOLDER.'mid');
 define('PHOTO_ARCHIVE_THUMB_FOLDER', PHOTO_ARCHIVE_FOLDER.'thumbs');
-
-define('THUMB_X', '192');
-define('THUMB_Y', '108');
-
-define('MID_X', '1920');
-define('MID_Y', '1080');
 
 class photo_archive
 {

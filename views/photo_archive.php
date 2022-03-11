@@ -23,6 +23,14 @@ class Photo_archive
         $this->label_previous = 'Previous';
     }
 
+    public function _human_size($bytes)
+    {
+        $si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
+        $base = 1024;
+        $class = min((int)log($bytes , $base) , count($si_prefix) - 1);
+        return sprintf('%1.2f' , $bytes / pow($base,$class)) . ' ' . $si_prefix[$class];
+    }
+
     public function _container($content)
     {
         $v = '<!DOCTYPE html>';
@@ -47,8 +55,11 @@ class Photo_archive
                     $v .= $content;
                 $v .= '</div>';
 
-                $v .= '<footer>';
-
+                $v .= '<footer style="color: #fff; text-align: center; line-height: 30px;">';
+                    $v .= 'Photo storage: ';
+                    $v .= $this->_human_size(disk_total_space(PHOTO_ARCHIVE_FOLDER));
+                    $v .= ' | Free space: ';
+                    $v .= $this->_human_size(disk_free_space('/media/reddeath'))  ;
                 $v .= '</footer>';
 
                 $v .= '<div id="lightbox">';
@@ -111,12 +122,15 @@ class Photo_archive
             $v .= '<div class="label">Download folder</div>';
         $v .= '</div>';
         */
+
         $v .= '<div class="images_container">';
             $total = count((array)$this->items->images);
             foreach ($this->items->images as $image) {
-                $v .= '<a id="image-'.$image['number'].'" data-number="'.$image['number'].'" data-total="'.$total.'" class="ajax-image" href="'.$image['mid'].'" title="View '.$image['name'].'" data-ajax="popup" data-gallery="'.$this->dir.'" data-exif="<p><b>'.$image['number'].' of '.$total.'</b></p>'.$image['exif'].'">';
+                $v .= '<a id="image-'.$image['number'].'" data-ext="'.$image['ext'].'" data-number="'.$image['number'].'" data-total="'.$total.'" class="ajax-image type_'.$image['type'].'" href="'.$image['mid'].'" title="View '.$image['name'].'" data-ajax="popup" data-gallery="'.$this->dir.'" data-exif="<p><b>'.$image['number'].' of '.$total.'</b></p>'.$image['exif'].'">';
                     $v .= '<div class="item">';
-                        $v .= '<div class="image"><img class="gallery-image" src="'.$image['thumb'].'" alt="View '.$image['name'].'" /></div>';
+                        $v .= '<div class="image" style="background-image: url('.str_replace(' ', '%20', $image['thumb']).');">';
+                            //$v .= '<img class="gallery-image" src="'.$image['thumb'].'" alt="View '.$image['name'].'" />';
+                        $v .= '</div>';
                         $v .= '<div class="label">'.$image['name'].'</div>';
                     $v .= '</div>';
                 $v .= '</a>';

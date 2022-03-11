@@ -69,10 +69,40 @@ jQuery(document).ready(function($) {
         var href = $(this).attr('href');
         var number = $(this).data('number');
         var total = $(this).data('total');
+        var ext = $(this).data('ext');
+        var elem = '';
 
         $('#lightbox').css('display', 'block');
         $('#lightbox-loading').css('display', 'none');
-        $('#lightbox-content img').css('display', 'none').attr('src', href);
+
+
+        ext = href.substr( (href.lastIndexOf('.') +1) ).toLowerCase();
+
+        $('#lightbox-content').html('');
+        if (ext == 'jpg' || ext == 'png' || ext == 'gif') {
+            elem = '<img src="'+href+'" id="lightbox-image">';
+        } else 
+        if (ext == 'mp4') {
+            elem = '<video controls class="lightbox-image"><source src="'+href+'" type="video/mp4"></video>';
+        } else {
+            elem = '<span class="lightbox-image">Unsupported file, please re-sync the gallery to convert this file.</span>';
+        }
+
+        $('#lightbox-content').html(elem);
+        /*
+        $('#lightbox-content').html('');
+
+        if (ext == 'jpg' || ext == 'png' || ext == 'gif') {
+            elem = '<img src="'+href+'" id="lightbox-image">';
+            console.log('extension: '+ext);
+        } else 
+        if (ext == 'mov') {
+            elem = '<embed id="lightbox-image" src="'+href+'" type="video/quicktime" style="width:320px;height:240px;"><noembed>Your browser does not support this media object or the embed element.</noembed></embed>';
+        }   
+
+        $('#lightbox-content').html(elem);
+        */
+        //$('#lightbox-content img').css('display', 'none').attr('src', href);
         $('#lightbox-caption').html(exif);
         var next = number + 1;
         var prev = number - 1;
@@ -105,6 +135,7 @@ jQuery(document).ready(function($) {
 
     $(document).on('click', '#lightbox-close', function() {
         $('#lightbox').css('display', 'none');
+        $('#lightbox-content').html('');
     });
 
     $(document).on('click', '#lightcase-prev', function() {
