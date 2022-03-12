@@ -340,3 +340,45 @@ footer {
     background: #fff7;
     background-image: url(../image/video-unsupported-overlay.svg);
 }
+
+.database-error {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    background: #ffcccc;
+    border-top: 5px solid var(--teal-blue);
+    left: 0;
+    bottom: 35px;
+}
+
+.caption-rule {
+    border-color: var(--maximum-purple);
+    border-width: 1px;
+    border-style: solid;
+    margin-top: 15px;
+}
+
+#lightbox-caption-description textarea {
+    width: 100%;
+    height: 100px;
+    resize: vertical;
+    border-radius: 0;
+    border: 2px var(--maximum-purple);    
+    background: #f6f6f6;
+}
+
+#lightbox-caption-description input[type=submit] {
+    width: 100%;
+    border-radius: 0;
+    border: 2px var(--maximum-purple);
+    background: #f6f6f6;
+    margin-top: 10px;
+    padding: 5px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+#lightbox-caption-description input[type=submit]:hover {
+    background: var(--columbia-blue);
+}

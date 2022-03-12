@@ -74,7 +74,28 @@ class Photo_archive
                         $v .= '</div>';
                     $v .= '</div>';
                     //$v .= '<div id="lightbox-caption"><span id="showing"></span></b><br><span class="tag">Robyn</span><span class="tag">Baby</span><br><br>DSC03014.JPG<br>03-Feb-2018<br>SONY DSLR-A200<br>1/2000sec<br>f/2.8<br>ISO800<br>10MP</div>';
-                    $v .= '<div id="lightbox-caption"></div>';
+                    $v .= '<div id="lightbox-caption">';
+                        $v .= '<div id="lightbox-caption-text"></div>';
+                        if (PHOTO_ARCHIVE_USE_DB) {
+                            $v .= '<hr class="caption-rule" />';
+                            $v .= '<p>';
+                                $v .= '<b>Description:</b>';
+                                $v .= '<img src="'.PHOTO_ARCHIVE_URL.'image/pencil.svg" 
+                                            style="height:14px; float: right; cursor: pointer;" 
+                                            title="Edit description"
+                                            id="edit_description"
+                                            data-db-id=""
+                                            data-file-name=""
+                                            data-folder-name=""
+                                            data-ajax-url="'.PHOTO_ARCHIVE_AJAX.'do=edit_description&"
+\                                    >';
+                            $v .= '</p>';
+                            $v .= '<div id="lightbox-caption-description"></div>';
+                            $v .= '<hr class="caption-rule" />';
+                            $v .= '<p><b>Tags:</b><img src="'.PHOTO_ARCHIVE_URL.'image/pencil.svg" style="height:14px; float: right;" title="Edit tags"></p>';
+                            $v .= '<div id="ligthbox-caption-tags"></div>';
+                        }
+                    $v .= '</div>';
                 $v .= '</div>';
                 $v .= '<div id="lightbox-loading">';
                     $v .= '<img id="lightbox-loading-image" src="'.PHOTO_ARCHIVE_URL.'image/loading.gif">';
@@ -126,7 +147,21 @@ class Photo_archive
         $v .= '<div class="images_container">';
             $total = count((array)$this->items->images);
             foreach ($this->items->images as $image) {
-                $v .= '<a id="image-'.$image['number'].'" data-ext="'.$image['ext'].'" data-number="'.$image['number'].'" data-total="'.$total.'" class="ajax-image type_'.$image['type'].'" href="'.$image['mid'].'" title="View '.$image['name'].'" data-ajax="popup" data-gallery="'.$this->dir.'" data-exif="<p><b>'.$image['number'].' of '.$total.'</b></p>'.$image['exif'].'">';
+                $v .= '<a id="image-'.$image['number'].'" 
+                        data-ext="'.$image['ext'].'" 
+                        data-number="'.$image['number'].'" 
+                        data-total="'.$total.'" 
+                        class="ajax-image type_'.$image['type'].'" 
+                        href="'.$image['mid'].'" 
+                        title="View '.$image['name'].'" 
+                        data-ajax="popup" 
+                        data-gallery="'.$this->dir.'" 
+                        data-file="'.$image['name'].'"
+                        data-exif="<p><b>'.$image['number'].' of '.$total.'</b></p>'.$image['exif'].'"
+                        data-description="'.base64_encode($image['description']).'"
+                        data-tags="'.base64_encode(json_encode($image['tags'])).'"
+                        data-db-id="'.$image['db_id'].'"
+                    >';
                     $v .= '<div class="item">';
                         $v .= '<div class="image" style="background-image: url('.str_replace(' ', '%20', $image['thumb']).');">';
                             //$v .= '<img class="gallery-image" src="'.$image['thumb'].'" alt="View '.$image['name'].'" />';
@@ -139,5 +174,18 @@ class Photo_archive
 
         echo '<script>document.getElementById("file_count").innerHTML = '.$total.';</script>';
         return (($this->container) ? $this->_container($v) : $v);
+    }
+
+    public function edit_description()
+    {
+        $v = '<form id="edit_description_form">';
+            $v .= '<input type="hidden" name="ajax-url" value="'.PHOTO_ARCHIVE_AJAX.'">';
+            $v .= '<input type="hidden" name="file" value="'.$this->file.'">';
+            $v .= '<input type="hidden" name="folder" value="'.$this->folder.'">';
+            $v .= '<textarea style="width: 100%; height: 100px; resize: vertical;">'.$this->description.'</textarea>';
+            $v .= '<input type="submit" value="Save" >';
+        $v .= '</form>';
+
+        return $v;
     }
 }

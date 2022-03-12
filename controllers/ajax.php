@@ -18,9 +18,11 @@ class Ajax
         switch ($do) {
             case 'load_folder': return $this->load_folder(); break;
             case 'resync_thumbs': return $this->resync_thumbs(); break;
+            case 'edit_description': return $this->edit_description(); break;
         }
     }
 
     public function load_folder() { $c = new Control(); return $c->load_folder(); die; }
     public function resync_thumbs() { $c = new Resync(); return $c->resync_thumbs(); die; }
+    public function edit_description() { $c = new Control(); return $c->edit_description(); die; }
 }

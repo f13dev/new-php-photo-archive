@@ -58,4 +58,25 @@ class Control
 
         return $v->display();
     }
+
+    public function edit_description()
+    {
+        $file = filter_input($this->request_method, 'file');
+        $folder = filter_input($this->request_method, 'folder');
+        $submit = (int) filter_input($this->request_method, 'submit');
+
+        $m = new \F13Dev\PhotoArchive\Models\Database();
+        $i = $m->select_description($folder, $file);
+
+        $description = (is_array($i) && array_key_exists('description', $i)) ? $i['description'] : '';
+        
+        $v = new \F13Dev\PhotoArchive\Views\Photo_archive(array(
+            'description' => $description,
+            'file' => $file,
+            'folder' => $folder,
+            'submit' => $submit,
+        ));
+
+        return $v->edit_description();
+    }
 }

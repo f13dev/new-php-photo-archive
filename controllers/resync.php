@@ -159,11 +159,22 @@ class Resync
 
     public function _create_thumbs_iterator()
     {
+        $m = new \F13Dev\PhotoArchive\Models\Database();
+
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(PHOTO_ARCHIVE_IMAGES_FOLDER), \RecursiveIteratorIterator::SELF_FIRST);
         foreach ($iterator as $path => $object) {
             echo str_pad('.', 4096);
             if (substr($path, -1) != '.') {
+
+                $file = basename($path);
+                $folder = str_replace($file, '', str_replace(PHOTO_ARCHIVE_IMAGES_FOLDER, '', $path));
+                echo 'File: '.$file.'<br>';
+                echo 'Folder: '.$folder.'<br>';
+                $m->insert_file($folder, $file);
+                //if ($m->insert_file($folder, $file) == true) {
+                //    echo str_pad('<br>'.date('Y-m-d H:i:s').' - Added to database - '.$path, 40960);
+                //}
 
                 $thumb = str_replace(PHOTO_ARCHIVE_IMAGES_FOLDER, PHOTO_ARCHIVE_THUMB_FOLDER, $path);
                 $mid = str_replace(PHOTO_ARCHIVE_IMAGES_FOLDER, PHOTO_ARCHIVE_MID_FOLDER, $path);

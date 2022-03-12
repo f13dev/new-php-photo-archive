@@ -1,47 +1,130 @@
 <?php namespace F13Dev\PhotoArchive\Models;
 
+use Exception;
+use PDOException;
+
 class Database 
 {
     private $dbc;
 
     public function __construct()
     {
-        /*
-        $this->dbc = new \PDO(
-            "mysql:host=".PHOTO_ARCHIVE_DB_HOST."
-            ;dbname=".PHOTO_ARCHIVE_DB_DATABASE.",
-            '".PHOTO_ARCHIVE_DB_USER."', '".PHOTO_ARCHIVE_DB_PASSWORD."'"
-        );
-        */
-        $this->dbc = new \mysqli(
-            PHOTO_ARCHIVE_DB_HOST,
-            PHOTO_ARCHIVE_DB_USER,
-            PHOTO_ARCHIVE_DB_PASSWORD,
-            PHOTO_ARCHIVE_DB_DATABASE
-        );
+        if (PHOTO_ARCHIVE_USE_DB) {
 
-        if ($this->dbc->connect_error) {
-            die("Connection failed: " . $dbc->connect_error);
+
+            try {
+                $this->dbc = new \PDO('mysql:host='.PHOTO_ARCHIVE_DB_HOST.';dbname='.PHOTO_ARCHIVE_DB_DATABASE, PHOTO_ARCHIVE_DB_USER, PHOTO_ARCHIVE_DB_PASSWORD);
+            } catch (Exception $e) {
+                echo "<span class='database-error'>Database connection failed: ".$e->getMessage()."</span>";
+                die();
+            } catch(PDOException $e) {
+                die ($e);
+            }
+
+            //$this->dbc = new \mysqli(
+            //    PHOTO_ARCHIVE_DB_HOST,
+            //    PHOTO_ARCHIVE_DB_USER,
+            //    PHOTO_ARCHIVE_DB_PASSWORD,
+            //    PHOTO_ARCHIVE_DB_DATABASE
+            //);
+
+            /*
+            if ($this->dbc->connect_error) {
+                echo "<span class='database-error'>Database connection failed: ".$this->dbc->connect_error."</span>";
+            } else {
+        
+                if ($result = $this->dbc->query("SHOW TABLES LIKE 'file_tag'")) {
+                    if($result->num_rows != 1) {
+                        echo "<span class='database-error'>Please run the database installation.</span>";
+                    }
+                }
+            }
+            */
         }
     }
 
     public function select_folder_data($folder)
     {
+        if (PHOTO_ARCHIVE_USE_DB) {
+            $sql = 'SELECT id, folder_name, file_name, description
+                FROM files
+                WHERE folder_name = :folder';
+            $sth = $this->dbc->prepare($sql);
+            $sth->execute(array('folder' => $folder));
+            return $sth->fetchAll(\PDO::FETCH_ASSOC);
+        }
 
+        return array();
+    }
+
+    public function select_tags($file_id) 
+    {
+        if (PHOTO_ARCHIVE_USE_DB) {
+            $sql = "SELECT db.file_id, db.tag_id, t.tag
+                    FROM file_tag db
+                    LEFT JOIN tags AS t ON (t.id = db.tag_id)
+                    WHERE db.file_id = :file_id";
+            $sth = $this->dbc->prepare($sql);
+            $sth->execute(array('file_id' => $file_id));
+            return $sth->fetchAll(\PDO::FETCH_ASSOC);
+        }
+    }
+
+    public function insert_file($folder, $file)
+    {
+        echo "Folder: ".$folder." File: ".$file."<br>";
+        if (PHOTO_ARCHIVE_USE_DB) {
+            $sql = "SELECT db.id
+                    FROM files db
+                    WHERE db.file_name = :file_name AND db.folder_name = :folder_name";
+            $sth = $this->dbc->prepare($sql);
+            $sth->execute(array('file_name' => $file, 'folder_name' => $folder));
+            $resp = $sth->fetchAll(\PDO::FETCH_ASSOC);
+
+            if (empty($resp)) { 
+                $sql = "INSERT INTO `files`
+                            (`file_name`, `folder_name`)
+                        VALUES
+                            (?, ?);";
+                $sth = $this->dbc->prepare($sql);
+                return $sth->execute(array($file, $folder));
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function insert_tag($folder, $file, $tag)
     {
-
+        if (PHOTO_ARCHIVE_USE_DB) {
+            // Ensure the record exists
+            $this->insert_file($folder, $file);
+        }
     }
 
     public function insert_description($folder, $file, $description)
     {
-
+        if (PHOTO_ARCHIVE_USE_DB) {
+            // Ensure the record exists
+            $this->insert_file($folder, $file);
+            $sql = "UPDATE files
+                    SET description = :description
+                    WHERE file_name = :file_name AND folder_name = :folder_name;";
+            $sth = $this->dbc->prepare($sql);
+            return ($sth->execute(array('file_name' => $file, 'folder_name' => $folder)));
+        }
     }
 
-    public function install()
+    public function select_description($folder, $file)
     {
-
+        if (PHOTO_ARCHIVE_USE_DB) {
+            $sql = "SELECT db.description
+                    FROM files db
+                    WHERE db.folder_name = :folder_name AND db.file_name = :file_name;";
+            $sth = $this->dbc->prepare($sql);
+            $sth->execute(array('folder_name' => $folder, 'file_name' => $file));
+            return $sth->fetch(\PDO::FETCH_ASSOC);
+        }
     }
 }

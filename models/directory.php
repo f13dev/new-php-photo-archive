@@ -4,8 +4,6 @@ class Directory
 {
     public function get_items($dir)
     {
-        //$m = new \F13Dev\PhotoArchive\Models\Database();
-
         $path = PHOTO_ARCHIVE_FOLDER.'images'.$dir;
         $folders = array();
         foreach(glob($path.'*', GLOB_ONLYDIR) as $folder) {
@@ -26,6 +24,10 @@ class Directory
             $parent = null;
         }
 
+        // Select SQL data if it exists
+        $m = new \F13Dev\PhotoArchive\Models\Database();
+        $data = $m->select_folder_data($dir);
+                
         $images = array();
         $count = 1;
         foreach (glob($path."*.{jpg,png,gif,JPG,PNG,GIF,mov,avi,mp4,MOV,AVI,MP4}", GLOB_BRACE) as $image) {     // ,mov,avi,MOV,AVI
@@ -87,8 +89,53 @@ class Directory
                 $exif_data .= '<strong>Date: </strong>:'.$date->format('F, j Y - H:i').'<br>';
             }
 
+            /*
+            $exif_data .= '<hr /><strong>Description:</strong><br>';
+
+            if (!empty($data)) {
+                foreach ($data as $data_item) {
+                    if (
+                        array_key_exists('file_name', $data_item) && 
+                        $data_item['file_name'] == basename($image) &&
+                        array_key_exists('description', $data_item)
+                    ) {
+                        $exif_data .= '<p>'.$data_item['description'].'</p>';
+                    }
+                }
+            }
+            */
+
             $images[basename($image)]['exif'] = $exif_data;
 
+            // Database driven items 
+            $db_file = false;
+            if (!empty($data)) {
+                foreach ($data as $data_item) {
+                    if (
+                        array_key_exists('file_name', $data_item) &&
+                        $data_item['file_name'] == basename($image)
+                    ) {
+                        $db_file = $data_item;
+                        break;
+                    }
+
+                }
+            }
+
+            $images[basename($image)]['db_id'] = false;
+            if ($db_file) {
+                $images[basename($image)]['db_id'] = $db_file['id'];
+            }
+
+            $images[basename($image)]['description'] = '';
+            if ($db_file && array_key_exists('description', $db_file)) {
+                $images[basename($image)]['description'] = $db_file['description'];
+            }
+
+            $images[basename($image)]['tags'] = '';
+            if ($db_file) {
+                $images[basename($image)]['tags'] = $m->select_tags($db_file['id']);
+            }
             $count++;
         }
         //$images = glob($path."*.{jpg,png,gif}", GLOB_BRACE);
