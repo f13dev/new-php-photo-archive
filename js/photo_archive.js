@@ -242,8 +242,8 @@ jQuery(document).ready(function($) {
 
     // Start of tags
     $(document).on('add_tag', '#add_tags input', function() {
-        var txt = this.value.replace(/[^a-z0-9\s\+\-\.\#]/ig,''); // allowed characters
-        if(txt) $("<span/>", {html:txt.toLowerCase()+'<input type="hidden" name="tags[]" value="'+txt+'">', insertBefore:this});
+        var txt = this.value.replace(/[^a-zA-Z0-9\s\+\-\.\#]/ig,''); // allowed characters
+        if(txt) $("<span/>", {html:txt+'<input type="hidden" name="tags[]" value="'+txt+'">', insertBefore:this});
         this.value = "";
         $('#add_tags_input').focus();
     });

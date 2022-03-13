@@ -256,7 +256,22 @@ footer {
     color: var(--columbia-blue);
     box-sizing: border-box;
     background-color: rgba(0,0,0,0.5);
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
+
+#lightbox-caption::-webkit-scrollbar {
+    width: 2px;
+  }
+   
+  #lightbox-caption::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+   
+  #lightbox-caption::-webkit-scrollbar-thumb {
+    background-color: var(--columbia-blue);
+    outline: 1px solid var(--teal-blue);
+  }
 
 #lightbox-content {
     margin: auto;
@@ -367,7 +382,8 @@ footer {
     background: #f6f6f6;
 }
 
-#lightbox-caption-description input[type=submit] {
+#lightbox-caption-description input[type=submit],
+#ligthbox-caption-tags input[type=submit] {
     width: 100%;
     border-radius: 0;
     border: 2px var(--maximum-purple);
@@ -378,7 +394,8 @@ footer {
     padding: 5px;
 }
 
-#lightbox-caption-description input[type=submit]:hover {
+#lightbox-caption-description input[type=submit]:hover,
+#ligthbox-caption-tags input[type=submit]:hover {
     background: var(--columbia-blue);
 }
 
