@@ -163,7 +163,6 @@ footer {
     height: 100%;
     opacity: .4;
     z-index: -1;
-    background: url(path/to/your/image);
 }
 
 #lightbox-container {

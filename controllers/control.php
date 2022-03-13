@@ -63,9 +63,18 @@ class Control
     {
         $file = filter_input($this->request_method, 'file');
         $folder = filter_input($this->request_method, 'folder');
+        $description = filter_input($this->request_method, 'description');
+        $number = (int) filter_input($this->request_method, 'number');
         $submit = (int) filter_input($this->request_method, 'submit');
 
         $m = new \F13Dev\PhotoArchive\Models\Database();
+
+        if ($submit) {
+            if ($m->insert_description($folder, $file, $description)) {
+                return htmlentities($description, ENT_QUOTES);
+            }
+        }
+
         $i = $m->select_description($folder, $file);
 
         $description = (is_array($i) && array_key_exists('description', $i)) ? $i['description'] : '';
@@ -75,6 +84,7 @@ class Control
             'file' => $file,
             'folder' => $folder,
             'submit' => $submit,
+            'number' => $number,
         ));
 
         return $v->edit_description();

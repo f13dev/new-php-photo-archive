@@ -158,7 +158,7 @@ class Photo_archive
                         data-gallery="'.$this->dir.'" 
                         data-file="'.$image['name'].'"
                         data-exif="<p><b>'.$image['number'].' of '.$total.'</b></p>'.$image['exif'].'"
-                        data-description="'.base64_encode($image['description']).'"
+                        data-description="'.base64_encode(htmlentities($image['description'], ENT_QUOTES)).'"
                         data-tags="'.base64_encode(json_encode($image['tags'])).'"
                         data-db-id="'.$image['db_id'].'"
                     >';
@@ -178,12 +178,16 @@ class Photo_archive
 
     public function edit_description()
     {
-        $v = '<form id="edit_description_form">';
-            $v .= '<input type="hidden" name="ajax-url" value="'.PHOTO_ARCHIVE_AJAX.'">';
+        $v = '<form id="edit_description_form" class="ajax-form" data-target="#lightbox-caption-description" method="POST" data-url="'.PHOTO_ARCHIVE_URL.'">';
+            $v .= '<input type="hidden" name="submit" value="1">';
+            $v .= '<input type="hidden" name="ajax" value="true">';
+            $v .= '<input type="hidden" name="do" value="edit_description">';
             $v .= '<input type="hidden" name="file" value="'.$this->file.'">';
             $v .= '<input type="hidden" name="folder" value="'.$this->folder.'">';
-            $v .= '<textarea style="width: 100%; height: 100px; resize: vertical;">'.$this->description.'</textarea>';
+            $v .= '<input type="hidden" name="number" value="'.$this->number.'">';
+            $v .= '<textarea name="description" style="width: 100%; height: 100px; resize: vertical;">'.$this->description.'</textarea>';
             $v .= '<input type="submit" value="Save" >';
+            $v .= ($this->submit) ? 'Submitted' : '';
         $v .= '</form>';
 
         return $v;

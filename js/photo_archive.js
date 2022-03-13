@@ -108,12 +108,23 @@ jQuery(document).ready(function($) {
         */
         //$('#lightbox-content img').css('display', 'none').attr('src', href);
         $('#lightbox-caption-text').html(exif);
-        $('#lightbox-caption-description').html(atob(description));   
+        $('#lightbox-caption-description').html(atob(description)); 
+        
+        var tag_decode = atob(tags);
+        tag_decode = JSON.parse(tag_decode);
+        tag_decode = JSON.parse(tag_decode);
+        var tag_string = '';
+        $.each(tag_decode, function(i, tag) {
+            var elem = '<span class="tag">'+tag.tag+'</span>';
+            tag_string = tag_string+elem;
+        });
+        $('#ligthbox-caption-tags').html(tag_string);
+
         var next = number + 1;
         var prev = number - 1;
         $('#lightbox-next').data('gallery', gallery).data('exif', $('#image-'+next).data('exif')).attr('href', $('#image-'+next).attr('href')).data('number', $('#image-'+next).data('number')).data('total', $('#image-'+next).data('total')).data('db-id', $('#image-'+next).data('db-id')).data('description', $('#image-'+next).data('description')).data('tags', $('#image-'+next).data('tags')).data('file', $('#image-'+next).data('file'));
         $('#lightbox-prev').data('gallery', gallery).data('exif', $('#image-'+prev).data('exif')).attr('href', $('#image-'+prev).attr('href')).data('number', $('#image-'+prev).data('number')).data('total', $('#image-'+prev).data('total')).data('db-id', $('#image-'+prev).data('db-id')).data('description', $('#image-'+prev).data('description')).data('tags', $('#image-'+prev).data('tags')).data('file', $('#image-'+prev).data('file'));
-        $('#edit_description').data('db-id', db_id).data('folder-name', gallery).data('file-name', file);  
+        $('#edit_description').data('db-id', db_id).data('folder-name', gallery).data('file-name', file).data('number', number);  
 
         console.log('DB_ID '+db_id);   
         console.log('Gallery '+gallery);
@@ -153,19 +164,57 @@ jQuery(document).ready(function($) {
     });
 
     $(document).on('click', '#edit_description', function() {
-        // Load a form into $('#lightbox-caption-description');
-
         var ajax_url = $(this).data('ajax-url');
         var file = $(this).data('file-name');
         var folder = $(this).data('folder-name');
+        var number = $(this).data('number');
 
-        var ajax_url = ajax_url+'file='+encodeURIComponent(file)+'&folder='+encodeURIComponent(folder);
-        
+        var ajax_url = ajax_url+'file='+encodeURIComponent(file)+'&folder='+encodeURIComponent(folder)+'&number='+encodeURIComponent(number);
+    
         $.ajax({
             url: ajax_url,
             cache: false,
         }).done(function(output) {
             $('#lightbox-caption-description').html(output);
+        });
+    });
+
+    $(document).on('submit', '.ajax-form', function(e) {
+        e.preventDefault();
+        var target = $(this).data('target');
+        var method = $(this).attr('method');
+
+        var submit = $(this).children('input[type="submit"]');
+        submit.css('display', 'none');    
+
+        var id = $(this).attr('id');
+
+        if (id == 'edit_description_form') {
+            var description = $(this).children('textarea[name="description"]').val();
+            var number = $(this).children('input[name="number"]').val();
+        }
+
+        console.log('Target: '+target);
+
+        var formData = new FormData(this);
+        var url = $(this).data('url');
+
+        $.ajax({
+            type : method,
+            url : url,
+            data : formData,
+            processData: false,
+            contentType: false,
+        }).done(function(d) {
+            $(target).html(d);
+            submit.css('display', 'unset');
+            // Update the description on the loaded image data
+            if (id == 'edit_description_form') {
+                var elem = '#image-'+number;
+                $(elem).data('description', btoa(description));
+            }
+        }).fail(function(d) {
+            alert('An error occured.');
         });
     });
 

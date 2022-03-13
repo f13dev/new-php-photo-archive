@@ -132,10 +132,11 @@ class Directory
                 $images[basename($image)]['description'] = $db_file['description'];
             }
 
-            $images[basename($image)]['tags'] = '';
+            $images[basename($image)]['tags'] = json_encode(array());
             if ($db_file) {
-                $images[basename($image)]['tags'] = $m->select_tags($db_file['id']);
+                $images[basename($image)]['tags'] = json_encode($db_file['tags']);
             }
+
             $count++;
         }
         //$images = glob($path."*.{jpg,png,gif}", GLOB_BRACE);

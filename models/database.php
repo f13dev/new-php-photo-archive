@@ -10,8 +10,6 @@ class Database
     public function __construct()
     {
         if (PHOTO_ARCHIVE_USE_DB) {
-
-
             try {
                 $this->dbc = new \PDO('mysql:host='.PHOTO_ARCHIVE_DB_HOST.';dbname='.PHOTO_ARCHIVE_DB_DATABASE, PHOTO_ARCHIVE_DB_USER, PHOTO_ARCHIVE_DB_PASSWORD);
             } catch (Exception $e) {
@@ -20,26 +18,6 @@ class Database
             } catch(PDOException $e) {
                 die ($e);
             }
-
-            //$this->dbc = new \mysqli(
-            //    PHOTO_ARCHIVE_DB_HOST,
-            //    PHOTO_ARCHIVE_DB_USER,
-            //    PHOTO_ARCHIVE_DB_PASSWORD,
-            //    PHOTO_ARCHIVE_DB_DATABASE
-            //);
-
-            /*
-            if ($this->dbc->connect_error) {
-                echo "<span class='database-error'>Database connection failed: ".$this->dbc->connect_error."</span>";
-            } else {
-        
-                if ($result = $this->dbc->query("SHOW TABLES LIKE 'file_tag'")) {
-                    if($result->num_rows != 1) {
-                        echo "<span class='database-error'>Please run the database installation.</span>";
-                    }
-                }
-            }
-            */
         }
     }
 
@@ -51,7 +29,13 @@ class Database
                 WHERE folder_name = :folder';
             $sth = $this->dbc->prepare($sql);
             $sth->execute(array('folder' => $folder));
-            return $sth->fetchAll(\PDO::FETCH_ASSOC);
+            $resp = $sth->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($resp as $key => $image) {
+                $resp[$key]['tags'] = $this->select_tags($image['id']);
+            }
+
+            return $resp;
         }
 
         return array();
@@ -72,7 +56,6 @@ class Database
 
     public function insert_file($folder, $file)
     {
-        echo "Folder: ".$folder." File: ".$file."<br>";
         if (PHOTO_ARCHIVE_USE_DB) {
             $sql = "SELECT db.id
                     FROM files db
@@ -112,7 +95,7 @@ class Database
                     SET description = :description
                     WHERE file_name = :file_name AND folder_name = :folder_name;";
             $sth = $this->dbc->prepare($sql);
-            return ($sth->execute(array('file_name' => $file, 'folder_name' => $folder)));
+            return ($sth->execute(array('description' => $description, 'file_name' => $file, 'folder_name' => $folder)));
         }
     }
 
