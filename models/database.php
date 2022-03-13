@@ -54,6 +54,36 @@ class Database
         }
     }
 
+    public function update_tags($folder, $file, $tags)
+    {
+        if (PHOTO_ARCHIVE_USE_DB) {
+            // get the file ID
+            $id = $this->insert_file($folder, $file);
+            if (!$id) {
+                return;
+            }
+            // Remove current tags
+            $sql = "DELETE FROM file_tag
+                    WHERE file_id = :id;";
+            $sth = $this->dbc->prepare($sql);
+            $sth->execute(array('id' => $id));
+            // Insert new tags
+            // Foreach tag run a similar query as get the file ID
+            foreach ($tags as $tag) {
+                $tag_id = $this->insert_new_tag($tag);
+                if ($tag_id) {
+                    // Insert the file_tag
+                    $sql = "INSERT INTO file_tag
+                                (file_id, tag_id)
+                            VALUES
+                                (:file_id, :tag_id);";
+                    $sth = $this->dbc->prepare($sql);
+                    $sth->execute(array('file_id' => $id, 'tag_id' => $tag_id));
+                }
+            }
+        }
+    }
+
     public function select_tag_search($text)
     {
         if (PHOTO_ARCHIVE_USE_DB) {
@@ -97,9 +127,35 @@ class Database
                         VALUES
                             (?, ?);";
                 $sth = $this->dbc->prepare($sql);
-                return $sth->execute(array($file, $folder));
+                $sth->execute(array($file, $folder));
+                return $this->dbc->lastInsertId();
             } else {
-                return true;
+                return $resp[0]['id'];
+            }
+        }
+        return false;
+    }
+
+    public function insert_new_tag($tag)
+    {
+        if (PHOTO_ARCHIVE_USE_DB) {
+            $sql = "SELECT db.id
+                    FROM tags db
+                    WHERE db.tag = :tag;";
+            $sth = $this->dbc->prepare($sql);
+            $sth->execute(array('tag' => $tag));
+            $resp = $sth->fetchAll(\PDO::FETCH_ASSOC);
+
+            if (empty($resp)) {
+                $sql = "INSERT INTO tags
+                            (tag)
+                        VALUES
+                            (:tag);";
+                $sth = $this->dbc->prepare($sql);
+                $sth->execute(array('tag' => $tag));
+                return $this->dbc->lastInsertId();
+            } else {
+                return $resp[0]['id'];
             }
         }
         return false;

@@ -63,14 +63,20 @@ class Control
     {
         $file = filter_input($this->request_method, 'file');
         $folder = filter_input($this->request_method, 'folder');
-        $tags = filter_input($this->request_method, 'tags');
         $number = (int) filter_input($this->request_method, 'number');
         $submit = (int) filter_input($this->request_method, 'submit');
+        $tags = filter_input($this->request_method, 'tags', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 
         $m = new \F13Dev\PhotoArchive\Models\Database();
 
         if ($submit) {
+            $m->update_tags($folder, $file, $tags);
 
+            $t = '';
+            foreach ($tags as $tag) {
+                $t .= '<span class="tag">'.htmlentities($tag, ENT_QUOTES).'</span>';
+            }
+            return $t;
         }
 
         $db_tags = $m->select_tags_by_file($folder, $file);
@@ -81,18 +87,6 @@ class Control
                 $tags[] = $tag['tag'];
             }
         }
-
-
-        /*
-        if (is_array($i)) {
-            $tags = '';
-            foreach ($i as $tag) {
-                if (is_array($tag) && array_key_exists('tag', $tag)) {
-                    $tags .= $tag['tag'].',';
-                }
-            }
-        }
-        */
 
         $v = new \F13Dev\PhotoArchive\Views\Photo_archive(array(
             'tags' => $tags,

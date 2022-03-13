@@ -118,7 +118,7 @@ jQuery(document).ready(function($) {
             var elem = '<span class="tag">'+tag.tag+'</span>';
             tag_string = tag_string+elem;
         });
-        $('#ligthbox-caption-tags').html(tag_string);
+        $('#lightbox-caption-tags').html(tag_string);
 
         var next = number + 1;
         var prev = number - 1;
@@ -194,7 +194,7 @@ jQuery(document).ready(function($) {
             url: ajax_url,
             cache: false,
         }).done(function(output) {
-            $('#ligthbox-caption-tags').html(output);
+            $('#lightbox-caption-tags').html(output);
         }).fail(function(d) {
             alert('Ajax loading failed');
         });
@@ -213,9 +213,22 @@ jQuery(document).ready(function($) {
         if (id == 'edit_description_form') {
             var description = $(this).children('textarea[name="description"]').val();
             var number = $(this).children('input[name="number"]').val();
-        }
+        } else 
+        if (id == 'edit_tags_form') {
+            $('#add_tags_input').trigger('add_tag');
 
-        console.log('Target: '+target);
+            var values = $("input[name='tags[]']")
+            .map(function(){return $(this).val();}).get(); 
+            
+            let obj = [];
+            values.forEach(function(value, key) {
+                var eachTag = {'tag' : value};
+                obj.push(eachTag);
+            });
+
+            values = JSON.stringify(obj)
+            var number = $(this).children('input[name="number"]').val();
+        }
 
         var formData = new FormData(this);
         var url = $(this).data('url');
@@ -233,6 +246,10 @@ jQuery(document).ready(function($) {
             if (id == 'edit_description_form') {
                 var elem = '#image-'+number;
                 $(elem).data('description', btoa(description));
+            } else 
+            if (id == 'edit_tags_form') {
+                var elem = '#image-'+number;
+                $(elem).data('tags', btoa(JSON.stringify(values)));
             }
         }).fail(function(d) {
             alert('An error occured.');

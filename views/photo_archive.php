@@ -104,7 +104,7 @@ class Photo_archive
                                             data-ajax-url="'.PHOTO_ARCHIVE_AJAX.'do=edit_tags&"
                                     >';
                             $v .= '</p>';
-                            $v .= '<div id="ligthbox-caption-tags"></div>';
+                            $v .= '<div id="lightbox-caption-tags"></div>';
                         }
                     $v .= '</div>';
                 $v .= '</div>';
@@ -213,7 +213,6 @@ class Photo_archive
             $v .= '<input type="hidden" name="file" value="'.$this->file.'">';
             $v .= '<input type="hidden" name="folder" value="'.$this->folder.'">';
             $v .= '<input type="hidden" name="number" value="'.$this->number.'">';
-            //$v .= '<textarea name="tags" style="width: 100%; height: 100px; resize: vertical;">'.$this->tags.'</textarea>';
 
             $v .= '<div id="add_tags">';
                 foreach ($this->tags as $tag) {
