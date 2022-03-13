@@ -125,6 +125,7 @@ jQuery(document).ready(function($) {
         $('#lightbox-next').data('gallery', gallery).data('exif', $('#image-'+next).data('exif')).attr('href', $('#image-'+next).attr('href')).data('number', $('#image-'+next).data('number')).data('total', $('#image-'+next).data('total')).data('db-id', $('#image-'+next).data('db-id')).data('description', $('#image-'+next).data('description')).data('tags', $('#image-'+next).data('tags')).data('file', $('#image-'+next).data('file'));
         $('#lightbox-prev').data('gallery', gallery).data('exif', $('#image-'+prev).data('exif')).attr('href', $('#image-'+prev).attr('href')).data('number', $('#image-'+prev).data('number')).data('total', $('#image-'+prev).data('total')).data('db-id', $('#image-'+prev).data('db-id')).data('description', $('#image-'+prev).data('description')).data('tags', $('#image-'+prev).data('tags')).data('file', $('#image-'+prev).data('file'));
         $('#edit_description').data('db-id', db_id).data('folder-name', gallery).data('file-name', file).data('number', number);  
+        $('#edit_tags').data('db-id', db_id).data('folder-name', gallery).data('file-name', file).data('number', number);
 
         console.log('DB_ID '+db_id);   
         console.log('Gallery '+gallery);
@@ -176,6 +177,26 @@ jQuery(document).ready(function($) {
             cache: false,
         }).done(function(output) {
             $('#lightbox-caption-description').html(output);
+        }).fail(function(d) {
+            alert('Ajax loading failed');
+        });
+    });
+
+    $(document).on('click', '#edit_tags', function() {
+        var ajax_url = $(this).data('ajax-url');
+        var file = $(this).data('file-name');
+        var folder = $(this).data('folder-name');
+        var number = $(this).data('number');
+
+        var ajax_url = ajax_url+'file='+encodeURIComponent(file)+'&folder='+encodeURIComponent(folder)+'&number='+encodeURIComponent(number);
+        
+        $.ajax({
+            url: ajax_url,
+            cache: false,
+        }).done(function(output) {
+            $('#ligthbox-caption-tags').html(output);
+        }).fail(function(d) {
+            alert('Ajax loading failed');
         });
     });
 
@@ -216,6 +237,52 @@ jQuery(document).ready(function($) {
         }).fail(function(d) {
             alert('An error occured.');
         });
+    });
+
+
+    // Start of tags
+    $(document).on('add_tag', '#add_tags input', function() {
+        var txt = this.value.replace(/[^a-z0-9\s\+\-\.\#]/ig,''); // allowed characters
+        if(txt) $("<span/>", {html:txt.toLowerCase()+'<input type="hidden" name="tags[]" value="'+txt+'">', insertBefore:this});
+        this.value = "";
+        $('#add_tags_input').focus();
+    });
+
+    $(document).on('keyup', '#add_tags_input', function(ev) {
+        if(/(188|13)/.test(ev.which)) {
+            $(this).trigger("add_tag"); 
+        } else 
+        var suggest = $('#add_tags_suggest');
+        if (this.value != '') {
+            var ajax = $(this).data('ajax');
+            var url = ajax+'do=suggest_tag&text='+encodeURIComponent(this.value);
+            // Ajax call to get tag suggestions
+
+            $.ajax({
+                type : 'GET',
+                url : url,
+            }).done(function(d) {
+                $(suggest).html(d).css('display', 'block');
+            }).fail(function(d) {
+                alert('An error occured.');
+            });
+        } else {
+            $(suggest).html('').css('display', 'none');
+        }
+    });
+
+    $(document).on('click', '#add_tags_suggest div', function() {
+        var input = $('#add_tags_input');
+        var tag = $(this).html();
+
+        input.val(tag);
+        input.trigger('add_tag');
+
+        $('#add_tags_suggest').html('').hide();
+    });
+
+    $(document).on('click', '#add_tags span', function() {
+        if(confirm("Remove "+ $(this).text() +"?")) $(this).remove(); 
     });
 
 });

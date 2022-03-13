@@ -54,6 +54,33 @@ class Database
         }
     }
 
+    public function select_tag_search($text)
+    {
+        if (PHOTO_ARCHIVE_USE_DB) {
+            $sql = "SELECT db.tag
+                    FROM tags db
+                    WHERE db.tag LIKE :text
+                    LIMIT 5;";
+            $sth = $this->dbc->prepare($sql);
+            $sth->execute(array('text' => '%'.$text.'%'));
+            return $sth->fetchAll(\PDO::FETCH_ASSOC);
+        }
+    }
+
+    public function select_tags_by_file($folder, $file)
+    {
+        if (PHOTO_ARCHIVE_USE_DB) {
+            $sql = "SELECT db.file_id, db.tag_id, t.tag
+                    FROM file_tag db
+                    LEFT JOIN tags AS t ON (t.id = db.tag_id)
+                    LEFT JOIN files AS f ON (f.id = db.file_id)
+                    WHERE f.folder_name = :folder AND f.file_name = :file;";
+            $sth = $this->dbc->prepare($sql);
+            $sth->execute(array('folder' => $folder, 'file' => $file));
+            return $sth->fetchAll(\PDO::FETCH_ASSOC);
+        }
+    }
+
     public function insert_file($folder, $file)
     {
         if (PHOTO_ARCHIVE_USE_DB) {

@@ -92,7 +92,18 @@ class Photo_archive
                             $v .= '</p>';
                             $v .= '<div id="lightbox-caption-description"></div>';
                             $v .= '<hr class="caption-rule" />';
-                            $v .= '<p><b>Tags:</b><img src="'.PHOTO_ARCHIVE_URL.'image/pencil.svg" style="height:14px; float: right;" title="Edit tags"></p>';
+                            $v .= '<p>';
+                                $v .= '<b>Tags:</b>';
+                                $v .= '<img src="'.PHOTO_ARCHIVE_URL.'image/pencil.svg" 
+                                            style="height:14px; float: right; cursor: pointer;" 
+                                            title="Edit tags"
+                                            id="edit_tags"
+                                            data-db-id=""
+                                            data-file-name=""
+                                            data-folder-name=""
+                                            data-ajax-url="'.PHOTO_ARCHIVE_AJAX.'do=edit_tags&"
+                                    >';
+                            $v .= '</p>';
                             $v .= '<div id="ligthbox-caption-tags"></div>';
                         }
                     $v .= '</div>';
@@ -186,6 +197,35 @@ class Photo_archive
             $v .= '<input type="hidden" name="folder" value="'.$this->folder.'">';
             $v .= '<input type="hidden" name="number" value="'.$this->number.'">';
             $v .= '<textarea name="description" style="width: 100%; height: 100px; resize: vertical;">'.$this->description.'</textarea>';
+            $v .= '<input type="submit" value="Save" >';
+            $v .= ($this->submit) ? 'Submitted' : '';
+        $v .= '</form>';
+
+        return $v;
+    }
+
+    public function edit_tags()
+    {
+        $v = '<form id="edit_tags_form" class="ajax-form" data-target="#lightbox-caption-tags" method="POST" data-url="'.PHOTO_ARCHIVE_URL.'">';
+            $v .= '<input type="hidden" name="submit" value="1">';
+            $v .= '<input type="hidden" name="ajax" value="true">';
+            $v .= '<input type="hidden" name="do" value="edit_tags">';
+            $v .= '<input type="hidden" name="file" value="'.$this->file.'">';
+            $v .= '<input type="hidden" name="folder" value="'.$this->folder.'">';
+            $v .= '<input type="hidden" name="number" value="'.$this->number.'">';
+            //$v .= '<textarea name="tags" style="width: 100%; height: 100px; resize: vertical;">'.$this->tags.'</textarea>';
+
+            $v .= '<div id="add_tags">';
+                foreach ($this->tags as $tag) {
+                    $v .= '<span>';
+                        $v .= '<input type="hidden" name="tags[]" value="'.$tag.'">';
+                        $v .= $tag;
+                    $v .= '</span>';
+                }
+                $v .= '<input type="text" value="" data-ajax="'.PHOTO_ARCHIVE_AJAX.'" placeholder="Add a tag" id="add_tags_input">';
+                $v .= '<div id="add_tags_suggest"></div>';
+            $v .= '</div>';
+
             $v .= '<input type="submit" value="Save" >';
             $v .= ($this->submit) ? 'Submitted' : '';
         $v .= '</form>';

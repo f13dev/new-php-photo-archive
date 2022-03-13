@@ -283,7 +283,7 @@ footer {
     background-color: var(--columbia-blue);
     color: var(--maximum-purple);
     margin-right: 10px;
-    margin-top: 10px;
+    margin-bottom: 10px;
 
     border-radius: 1.5em 0 0 1.5em;
 }
@@ -381,3 +381,57 @@ footer {
 #lightbox-caption-description input[type=submit]:hover {
     background: var(--columbia-blue);
 }
+
+
+/* Tags */
+#add_tags{
+    float:left;
+    border:1px solid #ccc;
+    padding:5px;
+    font-family:Arial;
+  }
+  #add_tags > span{
+    cursor:pointer;
+    display:block;
+    float:left;
+    color:#fff;
+    background:#789;
+    padding:5px;
+    padding-right:25px;
+    margin:4px;
+  }
+  #add_tags > span:hover{
+    opacity:0.7;
+  }
+  #add_tags > span:after{
+   position:absolute;
+   content:"×";
+   border:1px solid;
+   padding:2px 5px;
+   margin-left:3px;
+   font-size:11px;
+  }
+  #add_tags > input{
+    background:#eee;
+    border:0;
+    margin:4px;
+    padding:7px;
+    width:auto;
+  }
+
+  #add_tags_suggest {
+      background: #fff;
+      margin: 0 4px;
+      display: none;
+      color: #000;
+  }
+
+  #add_tags_suggest div {
+      display: block;
+      padding: 3px;
+      cursor: pointer;
+  }
+
+  #add_tags_suggest div:hover {
+      background: #ccc;
+  }

@@ -59,6 +59,52 @@ class Control
         return $v->display();
     }
 
+    public function edit_tags()
+    {
+        $file = filter_input($this->request_method, 'file');
+        $folder = filter_input($this->request_method, 'folder');
+        $tags = filter_input($this->request_method, 'tags');
+        $number = (int) filter_input($this->request_method, 'number');
+        $submit = (int) filter_input($this->request_method, 'submit');
+
+        $m = new \F13Dev\PhotoArchive\Models\Database();
+
+        if ($submit) {
+
+        }
+
+        $db_tags = $m->select_tags_by_file($folder, $file);
+
+        $tags = array();
+        foreach ($db_tags as $tag) {
+            if (is_array($tag) && array_key_exists('tag', $tag)) {
+                $tags[] = $tag['tag'];
+            }
+        }
+
+
+        /*
+        if (is_array($i)) {
+            $tags = '';
+            foreach ($i as $tag) {
+                if (is_array($tag) && array_key_exists('tag', $tag)) {
+                    $tags .= $tag['tag'].',';
+                }
+            }
+        }
+        */
+
+        $v = new \F13Dev\PhotoArchive\Views\Photo_archive(array(
+            'tags' => $tags,
+            'file' => $file,
+            'folder' => $folder,
+            'submit' => $submit,
+            'number' => $number,
+        ));
+
+        return $v->edit_tags();
+    }
+
     public function edit_description()
     {
         $file = filter_input($this->request_method, 'file');
@@ -89,4 +135,25 @@ class Control
 
         return $v->edit_description();
     }
-}
+
+    public function suggest_tag()
+    {
+        $text = filter_input($this->request_method, 'text');
+
+        $m = new \F13Dev\PhotoArchive\Models\Database();
+
+        $tags = $m->select_tag_search($text);
+
+        $v = '';
+        if (!empty($tags)) {
+            foreach ($tags as $tag) {
+                $v .= '<div>'.htmlentities($tag['tag'], ENT_QUOTES).'</div>';
+            }
+        }
+
+        return $v;
+
+        print('<pre>'.print_r($tags, true).'</pre>');
+
+    }
+} 
