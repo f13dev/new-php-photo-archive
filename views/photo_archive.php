@@ -49,6 +49,14 @@ class Photo_archive
                     $v .= '<span id="viewing">Viewing: /</span>';
                     $v .= '<span id="file_count">0</span>';
                     $v .= '<a href="'.PHOTO_ARCHIVE_URL.'/?ajax=1&do=resync_thumbs" id="sync" class="resync" data-target="#container" data-href="'.PHOTO_ARCHIVE_AJAX.'do=resync_thumbs">Re-sync gallery</a>';
+                    if (PHOTO_ARCHIVE_USE_DB) {
+                        $v .= '<form id="search" method="POST" data-href="'.PHOTO_ARCHIVE_URL.'">';
+                            $v .= '<input type="hidden" name="ajax" value="true">';
+                            $v .= '<input type="hidden" name="do" value="search">';
+                            $v .= '<input type="text" name="search_term">';
+                            $v .= '<input type="submit" value="Go">';
+                        $v .= '</form>';
+                    }
                 $v .= '</header>';
 
                 $v .= '<div id="container">';
@@ -221,7 +229,7 @@ class Photo_archive
                         $v .= $tag;
                     $v .= '</span>';
                 }
-                $v .= '<input type="text" value="" data-ajax="'.PHOTO_ARCHIVE_AJAX.'" placeholder="Add a tag" id="add_tags_input">';
+                $v .= '<input type="text" value="" data-ajax="'.PHOTO_ARCHIVE_AJAX.'" placeholder="Add a tag" id="add_tags_input" autocomplete="off">';
                 $v .= '<div id="add_tags_suggest"></div>';
             $v .= '</div>';
 

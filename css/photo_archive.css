@@ -441,3 +441,9 @@ footer {
   #add_tags_suggest div:hover {
       background: #ccc;
   }
+
+  #search {
+      position: absolute;
+      right: 8px;
+      top: 67px;
+  }

@@ -73,8 +73,10 @@ class Control
             $m->update_tags($folder, $file, $tags);
 
             $t = '';
-            foreach ($tags as $tag) {
-                $t .= '<span class="tag">'.htmlentities($tag, ENT_QUOTES).'</span>';
+            if (is_array($tags) && !empty($tags)) {
+                foreach ($tags as $tag) {
+                    $t .= '<span class="tag">'.htmlentities($tag, ENT_QUOTES).'</span>';
+                }
             }
             return $t;
         }
@@ -149,5 +151,16 @@ class Control
 
         print('<pre>'.print_r($tags, true).'</pre>');
 
+    }
+
+    public function search()
+    {
+        $term = filter_input($this->request_method, 'search_term');
+        
+        $m = new \F13Dev\PhotoArchive\Models\Database();
+
+        $results = $m->search($term);
+
+        print('<pre>'.print_r($results, true).'</pre>');
     }
 } 

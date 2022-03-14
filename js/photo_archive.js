@@ -302,6 +302,29 @@ jQuery(document).ready(function($) {
         if(confirm("Remove "+ $(this).text() +"?")) $(this).remove(); 
     });
 
+    $(document).on('submit', '#search', function(e) {
+        e.preventDefault();
+        var url = $(this).data('href');
+        var term = $(this).children('input[name="search_term"]').val();
+        var method = $(this).attr('method');
+        var formData = new FormData(this);
+        console.log(formData);
+        console.log(term);
+        if (term != '') {
+            $.ajax({
+                type : method,
+                url : url,
+                data : formData,
+                processData: false,
+                contentType: false,
+            }).done(function(d) {
+                $('#container').html(d);
+                console.log(d);
+            }).fail(function(d) {
+                alert('An error occured.');
+            });
+        }
+    });
 });
 
 jQuery.fn.extend({

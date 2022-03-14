@@ -69,16 +69,18 @@ class Database
             $sth->execute(array('id' => $id));
             // Insert new tags
             // Foreach tag run a similar query as get the file ID
-            foreach ($tags as $tag) {
-                $tag_id = $this->insert_new_tag($tag);
-                if ($tag_id) {
-                    // Insert the file_tag
-                    $sql = "INSERT INTO file_tag
-                                (file_id, tag_id)
-                            VALUES
-                                (:file_id, :tag_id);";
-                    $sth = $this->dbc->prepare($sql);
-                    $sth->execute(array('file_id' => $id, 'tag_id' => $tag_id));
+            if (is_array($tags) && !empty($tags)) {
+                foreach ($tags as $tag) {
+                    $tag_id = $this->insert_new_tag($tag);
+                    if ($tag_id) {
+                        // Insert the file_tag
+                        $sql = "INSERT INTO file_tag
+                                    (file_id, tag_id)
+                                VALUES
+                                    (:file_id, :tag_id);";
+                        $sth = $this->dbc->prepare($sql);
+                        $sth->execute(array('file_id' => $id, 'tag_id' => $tag_id));
+                    }
                 }
             }
         }
@@ -191,6 +193,40 @@ class Database
             $sth = $this->dbc->prepare($sql);
             $sth->execute(array('folder_name' => $folder, 'file_name' => $file));
             return $sth->fetch(\PDO::FETCH_ASSOC);
+        }
+    }
+
+    public function search($term) 
+    {
+        if (PHOTO_ARCHIVE_USE_DB) {
+            $terms = explode(',', $term);
+
+            $sql = "SELECT f.id, f.file_name, f.folder_name, f.description
+            FROM file_tag ft 
+            LEFT JOIN files AS f ON (f.id = ft.file_id)
+            JOIN tags AS t ON (t.id = ft.tag_id)
+            GROUP BY ft.file_id
+            HAVING ";
+            $params = array();
+            foreach ($terms as $i => $t) {
+                if (!empty(trim($t))) {
+                    $sql .= " SUM(CASE WHEN t.tag LIKE :term".$i." THEN 1 ELSE 0 END) > 0 AND ";
+                    $params['term'.$i] = '%'.trim($t).'%';
+                }
+            }
+            $sql = substr($sql, 0, -4).";";
+
+            $sth = $this->dbc->prepare($sql);
+            $sth->execute($params);
+            $resp = $sth->fetchAll(\PDO::FETCH_ASSOC);
+
+            $count = 1;
+            $images = array();
+            foreach ($resp as $image) {
+                $image_url = PHOTO_ARCHIVE_IMAGES_URL.$image['folder_name'].$image['file_name'];
+                $images[basename($image_url)]['image'] = $image_url;
+            }
+            return $images;
         }
     }
 }

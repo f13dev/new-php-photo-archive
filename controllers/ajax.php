@@ -21,6 +21,7 @@ class Ajax
             case 'edit_description': return $this->edit_description(); break;
             case 'edit_tags': return $this->edit_tags(); break;
             case 'suggest_tag'; return $this->suggest_tag(); break;
+            case 'search'; return $this->search(); break;
         }
     }
 
@@ -29,4 +30,5 @@ class Ajax
     public function edit_description() { $c = new Control(); return $c->edit_description(); die; }
     public function edit_tags() { $c = new Control(); return $c->edit_tags(); die; }
     public function suggest_tag() { $c = new Control(); return $c->suggest_tag(); die; }
+    public function search() { $c = new Control(); return $c->search(); die; }
 }
