@@ -12,6 +12,7 @@ class Control
     public function photo_archive()
     {
         $dir = filter_input($this->request_method, 'dir');
+        $dir = str_replace('>', DIRECTORY_SEPARATOR, $dir);
         $ajax = filter_input($this->request_method, 'ajax');
 
         if (!empty($ajax)) {
@@ -155,12 +156,22 @@ class Control
 
     public function search()
     {
-        $term = filter_input($this->request_method, 'search_term');
+        $terms = filter_input($this->request_method, 'tags', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+        $term = implode(',', $terms);
         
         $m = new \F13Dev\PhotoArchive\Models\Database();
 
         $results = $m->search($term);
 
-        print('<pre>'.print_r($results, true).'</pre>');
+        $items = new \stdClass();
+        $items->images = $results;
+
+        $v = new \F13Dev\PhotoArchive\Views\Photo_archive(array(
+            'items' => $items,
+            'dir' => 'Search',
+            'container' => false,
+        ));
+
+        return $v->display();
     }
 } 

@@ -41,13 +41,32 @@ class Database
         return array();
     }
 
+    public function select_file_data($folder, $file)
+    {
+        if (PHOTO_ARCHIVE_USE_DB) {
+            $sql = "SELECT db.id, db.folder_name, db.file_name, db.description
+                    FROM files db
+                    WHERE db.folder_name = :folder AND db.file_name = :file";
+            $sth = $this->dbc->prepare($sql);
+            $sth->execute(array('folder' => $folder, 'file' => $file));
+            $resp = $sth->fetch(\PDO::FETCH_ASSOC);
+
+            if ($resp) {
+                $resp['tags'] = $this->select_tags($resp['id']);
+                return $resp;
+            }
+            return false;
+        }
+    }
+
     public function select_tags($file_id) 
     {
         if (PHOTO_ARCHIVE_USE_DB) {
             $sql = "SELECT db.file_id, db.tag_id, t.tag
                     FROM file_tag db
                     LEFT JOIN tags AS t ON (t.id = db.tag_id)
-                    WHERE db.file_id = :file_id";
+                    WHERE db.file_id = :file_id
+                    ORDER BY t.tag";
             $sth = $this->dbc->prepare($sql);
             $sth->execute(array('file_id' => $file_id));
             return $sth->fetchAll(\PDO::FETCH_ASSOC);
@@ -225,6 +244,8 @@ class Database
             foreach ($resp as $image) {
                 $image_url = PHOTO_ARCHIVE_IMAGES_URL.$image['folder_name'].$image['file_name'];
                 $images[basename($image_url)]['image'] = $image_url;
+                $images[basename($image_url)] = \F13Dev\PhotoArchive\Models\Directory::image_array($image_url, $count);
+                $count++;
             }
             return $images;
         }

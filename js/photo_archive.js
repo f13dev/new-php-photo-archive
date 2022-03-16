@@ -66,6 +66,7 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         var gallery = $(this).data('gallery');
         var file = $(this).data('file');
+        var folder = $(this).data('folder');
         var exif = $(this).data('exif');
         var href = $(this).attr('href');
         var number = $(this).data('number');
@@ -122,13 +123,15 @@ jQuery(document).ready(function($) {
 
         var next = number + 1;
         var prev = number - 1;
-        $('#lightbox-next').data('gallery', gallery).data('exif', $('#image-'+next).data('exif')).attr('href', $('#image-'+next).attr('href')).data('number', $('#image-'+next).data('number')).data('total', $('#image-'+next).data('total')).data('db-id', $('#image-'+next).data('db-id')).data('description', $('#image-'+next).data('description')).data('tags', $('#image-'+next).data('tags')).data('file', $('#image-'+next).data('file'));
-        $('#lightbox-prev').data('gallery', gallery).data('exif', $('#image-'+prev).data('exif')).attr('href', $('#image-'+prev).attr('href')).data('number', $('#image-'+prev).data('number')).data('total', $('#image-'+prev).data('total')).data('db-id', $('#image-'+prev).data('db-id')).data('description', $('#image-'+prev).data('description')).data('tags', $('#image-'+prev).data('tags')).data('file', $('#image-'+prev).data('file'));
-        $('#edit_description').data('db-id', db_id).data('folder-name', gallery).data('file-name', file).data('number', number);  
-        $('#edit_tags').data('db-id', db_id).data('folder-name', gallery).data('file-name', file).data('number', number);
+        $('#lightbox-next').data('folder', $('#image-'+next).data('folder')).data('gallery', $('#image-'+next).data('folder')).data('exif', $('#image-'+next).data('exif')).attr('href', $('#image-'+next).attr('href')).data('number', $('#image-'+next).data('number')).data('total', $('#image-'+next).data('total')).data('db-id', $('#image-'+next).data('db-id')).data('description', $('#image-'+next).data('description')).data('tags', $('#image-'+next).data('tags')).data('file', $('#image-'+next).data('file'));
+        $('#lightbox-prev').data('folder', $('#image-'+prev).data('folder')).data('gallery', $('#image-'+prev).data('folder')).data('exif', $('#image-'+prev).data('exif')).attr('href', $('#image-'+prev).attr('href')).data('number', $('#image-'+prev).data('number')).data('total', $('#image-'+prev).data('total')).data('db-id', $('#image-'+prev).data('db-id')).data('description', $('#image-'+prev).data('description')).data('tags', $('#image-'+prev).data('tags')).data('file', $('#image-'+prev).data('file'));
+        $('#edit_description').data('db-id', db_id).data('folder-name', folder).data('file-name', file).data('number', number);  
+        $('#edit_tags').data('db-id', db_id).data('folder-name', folder).data('file-name', file).data('number', number);
+
+        console.log(folder);
 
         console.log('DB_ID '+db_id);   
-        console.log('Gallery '+gallery);
+        console.log('Gallery '+folder);
         console.log('File: '+file);        
         
         $('#lightbox-download-link').attr('href', href);
@@ -265,6 +268,34 @@ jQuery(document).ready(function($) {
         $('#add_tags_input').focus();
     });
 
+    $(document).on('add_tag', 'input[name="search_term"]', function() {
+        var txt = this.value.replace(/[^a-zA-Z0-9\s\+\-\.\#]/ig,''); // allowed characters
+        if (txt) $("<span/>", {html:txt+'<input type="hidden" name="tags[]" value="'+txt+'">', insertBefore:this});
+        this.value = "";
+        $(this).focus();
+    })
+
+    $(document).on('keyup', 'input[name="search_term"]', function(ev) {
+        var suggest = $('#search_term_suggest');
+        if (/(188|13)/.test(ev.which)) {
+            $(this).trigger("add_tag");
+        } else 
+        if (this.value != '') {
+            var ajax = $(this).data('ajax');
+            var url = ajax+'do=suggest_tag&text='+encodeURIComponent(this.value);
+            $.ajax({
+                type: 'GET',
+                url: url,
+            }).done(function(d) {
+                $(suggest).html(d).css('display', 'block');
+            }).fail(function(d) {
+                alert('An error ocurred.');
+            });
+        } else {
+            $(suggest).html('').css('display', 'none');
+        }
+    });
+
     $(document).on('keyup', '#add_tags_input', function(ev) {
         if(/(188|13)/.test(ev.which)) {
             $(this).trigger("add_tag"); 
@@ -281,12 +312,22 @@ jQuery(document).ready(function($) {
             }).done(function(d) {
                 $(suggest).html(d).css('display', 'block');
             }).fail(function(d) {
-                alert('An error occured.');
+                alert('An error ocurred.');
             });
         } else {
             $(suggest).html('').css('display', 'none');
         }
     });
+
+    $(document).on('click', '#search_term_suggest div', function() {
+        var input = $('input[name="search_term"]');
+        var tag = $(this).html();
+
+        input.val(tag);
+        input.trigger('add_tag');
+
+        $('#search_term_suggest').html('').hide();
+    })
 
     $(document).on('click', '#add_tags_suggest div', function() {
         var input = $('#add_tags_input');
@@ -302,14 +343,34 @@ jQuery(document).ready(function($) {
         if(confirm("Remove "+ $(this).text() +"?")) $(this).remove(); 
     });
 
+    $(document).on('click', '#search span', function() {
+        $(this).remove();
+    })
+
     $(document).on('submit', '#search', function(e) {
         e.preventDefault();
         var url = $(this).data('href');
         var term = $(this).children('input[name="search_term"]').val();
         var method = $(this).attr('method');
         var formData = new FormData(this);
+
+
+        var terms = $('input[name^=tags]').map(function(idx, elem) {
+            return $(elem).val();
+          }).get();
+
+          var term = '';
+          terms.forEach(function(value, key) {
+              if (term == '') {
+                  term = value;
+              } else {
+                  term = term+', '+value;
+              }
+          });
+          console.log(term);
+
         console.log(formData);
-        console.log(term);
+        console.log(url);
         if (term != '') {
             $.ajax({
                 type : method,
@@ -319,11 +380,19 @@ jQuery(document).ready(function($) {
                 contentType: false,
             }).done(function(d) {
                 $('#container').html(d);
+                $('#viewing').html('Search results: '+unescape(term));
+                $('#search').slideToggle('slow');
                 console.log(d);
+                console.log('success');
             }).fail(function(d) {
                 alert('An error occured.');
             });
         }
+    });
+
+    $(document).on('click', '#search-toggle', function() {
+        $('#search').slideToggle('slow');
+        $('input[name="search_term"]').focus();
     });
 });
 

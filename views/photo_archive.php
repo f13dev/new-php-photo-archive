@@ -50,11 +50,13 @@ class Photo_archive
                     $v .= '<span id="file_count">0</span>';
                     $v .= '<a href="'.PHOTO_ARCHIVE_URL.'/?ajax=1&do=resync_thumbs" id="sync" class="resync" data-target="#container" data-href="'.PHOTO_ARCHIVE_AJAX.'do=resync_thumbs">Re-sync gallery</a>';
                     if (PHOTO_ARCHIVE_USE_DB) {
+                        $v .= '<img src="'.PHOTO_ARCHIVE_URL.'image/search.svg" style="position: absolute; right: 10px; top: 67px; height: 22px; cursor: pointer;" id="search-toggle" title="Search...">';
                         $v .= '<form id="search" method="POST" data-href="'.PHOTO_ARCHIVE_URL.'">';
                             $v .= '<input type="hidden" name="ajax" value="true">';
                             $v .= '<input type="hidden" name="do" value="search">';
-                            $v .= '<input type="text" name="search_term">';
+                            $v .= '<input type="text" name="search_term" autocomplete="off" data-ajax="'.PHOTO_ARCHIVE_AJAX.'">';
                             $v .= '<input type="submit" value="Go">';
+                            $v .= '<div id="search_term_suggest"></div>';
                         $v .= '</form>';
                     }
                 $v .= '</header>';
@@ -130,7 +132,7 @@ class Photo_archive
         $v = '';
         $v .= '<div id="folders_container">';
             if (!empty($this->items->parent)) {
-                $v .= '<a href="?dir='.$this->items->parent.'" data-folder="'.$this->items->parent.'" class="ajax-link" data-target="#container" data-href="'.PHOTO_ARCHIVE_AJAX.'do=load_folder&folder='.$this->items->parent.'" title="View parent folder">';
+                $v .= '<a href="?dir='.str_replace('/', '>', $this->items->parent).'" data-folder="'.$this->items->parent.'" class="ajax-link" data-target="#container" data-href="'.PHOTO_ARCHIVE_AJAX.'do=load_folder&folder='.$this->items->parent.'" title="View parent folder">';
                     $v .= '<div class="item">';
                         $v .= '<div class="folder folder-up"></div>';
                         $v .= '<div class="label">Parent folder</div>';
@@ -138,13 +140,15 @@ class Photo_archive
                 $v .= '</a>';
             }
 
-            foreach ($this->items->folders as $folder => $dir) {
-                $v .= '<a href="?dir='.$dir.'" data-folder="'.$dir.'" class="ajax-link" data-target="#container" data-href="'.PHOTO_ARCHIVE_AJAX.'do=load_folder&folder='.$dir.'" title="View '.$folder.'">';
-                    $v .= '<div class="item">';
-                        $v .= '<div class="folder"></div>';
-                        $v .= '<div class="label">'.$folder.'</div>';
-                    $v .= '</div>';
-                $v .= '</a>';
+            if (property_exists($this->items, 'folders')) {
+                foreach ($this->items->folders as $folder => $dir) {
+                    $v .= '<a href="?dir='.$dir.'" data-folder="'.$dir.'" class="ajax-link" data-target="#container" data-href="'.PHOTO_ARCHIVE_AJAX.'do=load_folder&folder='.$dir.'" title="View '.$folder.'">';
+                        $v .= '<div class="item">';
+                            $v .= '<div class="folder"></div>';
+                            $v .= '<div class="label">'.$folder.'</div>';
+                        $v .= '</div>';
+                    $v .= '</a>';
+                }
             }
         $v .= '</div>';
 
@@ -176,6 +180,7 @@ class Photo_archive
                         data-ajax="popup" 
                         data-gallery="'.$this->dir.'" 
                         data-file="'.$image['name'].'"
+                        data-folder="'.$image['folder'].'"
                         data-exif="<p><b>'.$image['number'].' of '.$total.'</b></p>'.$image['exif'].'"
                         data-description="'.base64_encode(htmlentities($image['description'], ENT_QUOTES)).'"
                         data-tags="'.base64_encode(json_encode($image['tags'])).'"
