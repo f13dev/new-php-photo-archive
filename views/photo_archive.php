@@ -50,7 +50,7 @@ class Photo_archive
                     $v .= '<span id="file_count">0</span>';
                     $v .= '<a href="'.PHOTO_ARCHIVE_URL.'/?ajax=1&do=resync_thumbs" id="sync" class="resync" data-target="#container" data-href="'.PHOTO_ARCHIVE_AJAX.'do=resync_thumbs">Re-sync gallery</a>';
                     if (PHOTO_ARCHIVE_USE_DB) {
-                        $v .= '<img src="'.PHOTO_ARCHIVE_URL.'image/search.svg" style="position: absolute; right: 10px; top: 67px; height: 22px; cursor: pointer;" id="search-toggle" title="Search...">';
+                        $v .= '<img src="'.PHOTO_ARCHIVE_URL.'image/search.svg" id="search-toggle" title="Search...">';
                         $v .= '<form id="search" method="POST" data-href="'.PHOTO_ARCHIVE_URL.'">';
                             $v .= '<input type="hidden" name="ajax" value="true">';
                             $v .= '<input type="hidden" name="do" value="search">';

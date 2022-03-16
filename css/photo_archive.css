@@ -151,7 +151,7 @@ footer {
     left: 0;
     right: 0;
     background-color: var(--dark-purple);
-
+    z-index: 9;
     display: none;
 }
 
@@ -459,3 +459,100 @@ footer {
       display: none;
       width: 211px;
   }
+
+#search-toggle {
+    position: absolute; right: 10px; top: 67px; height: 22px; cursor: pointer;
+}
+
+@media screen and (max-width: 650px) {
+    #search {
+        width: 100%;
+        border-left: 0;
+        box-sizing: border-box;
+        top: 110px;
+    }
+
+    #search input[type=text] {
+        width: calc(100% - 34px);
+    }
+
+    .item {
+        width: calc(33.333333% - 10px);
+    }
+
+    .item .image, .item .folder {
+        margin: auto;
+    }
+
+    .item .label {
+        width: unset;
+        margin-top: 5px;
+    }
+
+    header #sync {
+        display: none;
+    }
+
+    header #viewing {
+        left: 12px;
+        top: 55px;
+    }
+
+    header #file_count {
+        top: 55px;
+        display: none;
+    }
+
+    #search-toggle {
+        top: 78px;
+        left: 12px;
+    }
+
+    header {
+        height: 110px
+    }
+
+    #container {
+        margin-top: 115px;
+    }
+
+    #lightbox-caption {
+        left: 10px;
+        right: 10px;
+        width: unset;
+        height: 30vh;
+    }
+
+    #lightbox-container {
+        top: calc(30vh + 80px);
+        left: 10px;
+        right: 10px;
+        bottom: 70px;
+    }
+
+    #lightbox-info {
+        display: none;
+    }
+
+    #lightbox-download, #lightbox-prev {
+        right: unset;
+        left: 10px;
+    }
+
+    #lightbox-content img, #lightbox-content video {
+        max-width: calc(100vw - 52px);
+        max-height: calc(70vh - 165px);
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .item {
+        width: calc(50% - 10px);
+    }
+}
+
+@media screen and (max-width: 350px) {
+    .item {
+        width: 100%;
+    }
+}
