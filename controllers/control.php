@@ -149,9 +149,6 @@ class Control
         }
 
         return $v;
-
-        print('<pre>'.print_r($tags, true).'</pre>');
-
     }
 
     public function search()

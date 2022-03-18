@@ -47,7 +47,7 @@ jQuery(document).ready(function($) {
             }
 
             function check_loaded() {
-                console.log(loaded);
+                //console.log(loaded);
                 if (loaded == total) {
                     $('#lightbox-loading').css('display', 'none');
                     $(target).css('display', 'block');
@@ -55,8 +55,8 @@ jQuery(document).ready(function($) {
             }
 
             $(".gallery-image")
-                .on('load', function() { loaded++; check_loaded(); console.log("image loaded correctly"); })
-                .on('error', function() { loaded++; check_loaded(); console.log("error loading image"); })
+                .on('load', function() { loaded++; check_loaded(); /*console.log("image loaded correctly");*/ })
+        .on('error', function() { loaded++; check_loaded(); /*console.log("error loading image");*/ })
             ;
 
         });
@@ -128,11 +128,11 @@ jQuery(document).ready(function($) {
         $('#edit_description').data('db-id', db_id).data('folder-name', folder).data('file-name', file).data('number', number);  
         $('#edit_tags').data('db-id', db_id).data('folder-name', folder).data('file-name', file).data('number', number);
 
-        console.log(folder);
+        //console.log(folder);
 
-        console.log('DB_ID '+db_id);   
-        console.log('Gallery '+folder);
-        console.log('File: '+file);        
+        //console.log('DB_ID '+db_id);   
+        //console.log('Gallery '+folder);
+        //console.log('File: '+file);        
         
         $('#lightbox-download-link').attr('href', href);
 
@@ -153,8 +153,8 @@ jQuery(document).ready(function($) {
             }
 
             $("#lightbox-content img")
-                .on('load', function() { loaded(); console.log("image loaded correctly"); })
-                .on('error', function() { loaded(); console.log("error loading image"); })
+                .on('load', function() { loaded(); /*console.log("image loaded correctly");*/ })
+        .on('error', function() { loaded(); /*console.log("error loading image");*/ })
             ;
     });
 
@@ -354,6 +354,7 @@ jQuery(document).ready(function($) {
         var method = $(this).attr('method');
         var formData = new FormData(this);
 
+        $('#lightbox-loading').css('display', 'block');
 
         var terms = $('input[name^=tags]').map(function(idx, elem) {
             return $(elem).val();
@@ -367,10 +368,10 @@ jQuery(document).ready(function($) {
                   term = term+', '+value;
               }
           });
-          console.log(term);
+          //console.log(term);
 
-        console.log(formData);
-        console.log(url);
+        //console.log(formData);
+        //console.log(url);
         if (term != '') {
             $.ajax({
                 type : method,
@@ -382,10 +383,12 @@ jQuery(document).ready(function($) {
                 $('#container').html(d);
                 $('#viewing').html('Search results: '+unescape(term));
                 $('#search').slideToggle('slow');
-                console.log(d);
-                console.log('success');
+                $('#lightbox-loading').css('display', 'none');
+                //console.log(d);
+                //console.log('success');
             }).fail(function(d) {
-                alert('An error occured.');
+                alert('An error ocurred.');
+                $('#lightbox-loading').css('display', 'none');
             });
         }
     });

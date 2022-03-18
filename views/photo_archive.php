@@ -39,8 +39,8 @@ class Photo_archive
                 $v .= '<meta name="viewport" content="width=device-width, initial-scale=1">';
                 $v .= '<link rel="shortcut icon" href="'.PHOTO_ARCHIVE_URL.'image/favicon.ico">';
                 $v .= '<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>';
-                $v .= '<script src="'.PHOTO_ARCHIVE_URL.'js/photo_archive.js"></script>';
-                $v .= '<link rel="stylesheet" href="'.PHOTO_ARCHIVE_URL.'css/photo_archive.css">';
+                $v .= '<script src="'.PHOTO_ARCHIVE_URL.'js/photo_archive'.(PHOTO_ARCHIVE_MINIFY ? '.min' : '').'.js"></script>';
+                $v .= '<link rel="stylesheet" href="'.PHOTO_ARCHIVE_URL.'css/photo_archive'.(PHOTO_ARCHIVE_MINIFY ? '.min' : '').'.css">';
                 $v .= '<title>'.$this->label_photo_archive.'</title>';
             $v .= '</head>';
             $v .= '<body>';

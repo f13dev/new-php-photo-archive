@@ -29,6 +29,9 @@ define('PHOTO_ARCHIVE_IMAGES_FOLDER', PHOTO_ARCHIVE_FOLDER.'images');
 define('PHOTO_ARCHIVE_MID_FOLDER', PHOTO_ARCHIVE_FOLDER.'mid');
 define('PHOTO_ARCHIVE_THUMB_FOLDER', PHOTO_ARCHIVE_FOLDER.'thumbs');
 
+// Use minified JS and CSS (disable for development)
+define('PHOTO_ARCHIVE_MINIFY', true);
+
 class photo_archive
 {
     public function __construct()
