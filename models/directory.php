@@ -63,6 +63,9 @@ class Directory
             $date = \DateTime::createFromFormat('Y:m:d H:i:s', $ifd['DateTime']);
             $exif_data .= '<strong>Date: </strong>:'.$date->format('F, j Y - H:i').'<br>';
         }
+        if (@array_key_exists('Copyright', $ifd) && !empty(trim($ifd['Copyright']))) {
+            $exif_data .= '<strong>Copyright: </strong>'.$ifd['Copyright'].'<br>';
+        }
 
         $image['exif'] = $exif_data;
 
