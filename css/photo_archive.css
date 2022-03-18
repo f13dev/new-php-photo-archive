@@ -464,7 +464,7 @@ footer {
     position: absolute; right: 10px; top: 67px; height: 22px; cursor: pointer;
 }
 
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 1000px) {
     #search {
         width: 100%;
         border-left: 0;
@@ -477,7 +477,7 @@ footer {
     }
 
     .item {
-        width: calc(33.333333% - 10px);
+        width: calc(25% - 10px);
     }
 
     .item .image, .item .folder {
@@ -542,6 +542,12 @@ footer {
     #lightbox-content img, #lightbox-content video {
         max-width: calc(100vw - 52px);
         max-height: calc(70vh - 165px);
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .item {
+        width: calc(33.333333% - 10px);
     }
 }
 

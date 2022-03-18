@@ -80,7 +80,6 @@ class Photo_archive
                     $v .= '<img id="lightbox-info" src="'.PHOTO_ARCHIVE_URL.'image/info.svg" title="'.$this->label_info.'">';
                     $v .= '<div id="lightbox-container">';
                         $v .= '<div id="lightbox-content">';
-                            $v .= '<img src="'.PHOTO_ARCHIVE_URL.'image/robyn.jpg" id="lightbox-image">';
                         $v .= '</div>';
                     $v .= '</div>';
                     //$v .= '<div id="lightbox-caption"><span id="showing"></span></b><br><span class="tag">Robyn</span><span class="tag">Baby</span><br><br>DSC03014.JPG<br>03-Feb-2018<br>SONY DSLR-A200<br>1/2000sec<br>f/2.8<br>ISO800<br>10MP</div>';
@@ -196,7 +195,7 @@ class Photo_archive
             }
         $v .= '</div>';
 
-        echo '<script>document.getElementById("file_count").innerHTML = '.$total.';</script>';
+        $v .= '<script>document.getElementById("file_count").innerHTML = '.$total.';</script>';
         return (($this->container) ? $this->_container($v) : $v);
     }
 
