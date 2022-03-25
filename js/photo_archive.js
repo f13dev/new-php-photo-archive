@@ -47,7 +47,6 @@ jQuery(document).ready(function($) {
             }
 
             function check_loaded() {
-                //console.log(loaded);
                 if (loaded == total) {
                     $('#lightbox-loading').css('display', 'none');
                     $(target).css('display', 'block');
@@ -55,8 +54,8 @@ jQuery(document).ready(function($) {
             }
 
             $(".gallery-image")
-                .on('load', function() { loaded++; check_loaded(); /*console.log("image loaded correctly");*/ })
-        .on('error', function() { loaded++; check_loaded(); /*console.log("error loading image");*/ })
+                .on('load', function() { loaded++; check_loaded();})
+        .on('error', function() { loaded++; check_loaded();})
             ;
 
         });
@@ -94,20 +93,6 @@ jQuery(document).ready(function($) {
         }
 
         $('#lightbox-content').html(elem);
-        /*
-        $('#lightbox-content').html('');
-
-        if (ext == 'jpg' || ext == 'png' || ext == 'gif') {
-            elem = '<img src="'+href+'" id="lightbox-image">';
-            console.log('extension: '+ext);
-        } else 
-        if (ext == 'mov') {
-            elem = '<embed id="lightbox-image" src="'+href+'" type="video/quicktime" style="width:320px;height:240px;"><noembed>Your browser does not support this media object or the embed element.</noembed></embed>';
-        }   
-
-        $('#lightbox-content').html(elem);
-        */
-        //$('#lightbox-content img').css('display', 'none').attr('src', href);
         $('#lightbox-caption-text').html(exif);
         $('#lightbox-caption-description').html(atob(description)); 
         
@@ -126,13 +111,7 @@ jQuery(document).ready(function($) {
         $('#lightbox-next').data('folder', $('#image-'+next).data('folder')).data('gallery', $('#image-'+next).data('folder')).data('exif', $('#image-'+next).data('exif')).attr('href', $('#image-'+next).attr('href')).data('number', $('#image-'+next).data('number')).data('total', $('#image-'+next).data('total')).data('db-id', $('#image-'+next).data('db-id')).data('description', $('#image-'+next).data('description')).data('tags', $('#image-'+next).data('tags')).data('file', $('#image-'+next).data('file'));
         $('#lightbox-prev').data('folder', $('#image-'+prev).data('folder')).data('gallery', $('#image-'+prev).data('folder')).data('exif', $('#image-'+prev).data('exif')).attr('href', $('#image-'+prev).attr('href')).data('number', $('#image-'+prev).data('number')).data('total', $('#image-'+prev).data('total')).data('db-id', $('#image-'+prev).data('db-id')).data('description', $('#image-'+prev).data('description')).data('tags', $('#image-'+prev).data('tags')).data('file', $('#image-'+prev).data('file'));
         $('#edit_description').data('db-id', db_id).data('folder-name', folder).data('file-name', file).data('number', number);  
-        $('#edit_tags').data('db-id', db_id).data('folder-name', folder).data('file-name', file).data('number', number);
-
-        //console.log(folder);
-
-        //console.log('DB_ID '+db_id);   
-        //console.log('Gallery '+folder);
-        //console.log('File: '+file);        
+        $('#edit_tags').data('db-id', db_id).data('folder-name', folder).data('file-name', file).data('number', number);    
         
         $('#lightbox-download-link').attr('href', href);
 
@@ -153,8 +132,8 @@ jQuery(document).ready(function($) {
             }
 
             $("#lightbox-content img")
-                .on('load', function() { loaded(); /*console.log("image loaded correctly");*/ })
-        .on('error', function() { loaded(); /*console.log("error loading image");*/ })
+                .on('load', function() { loaded();})
+        .on('error', function() { loaded();})
             ;
     });
 
@@ -368,10 +347,7 @@ jQuery(document).ready(function($) {
                   term = term+', '+value;
               }
           });
-          //console.log(term);
 
-        //console.log(formData);
-        //console.log(url);
         if (term != '') {
             $.ajax({
                 type : method,
@@ -384,8 +360,6 @@ jQuery(document).ready(function($) {
                 $('#viewing').html('Search results: '+unescape(term));
                 $('#search').slideToggle('slow');
                 $('#lightbox-loading').css('display', 'none');
-                //console.log(d);
-                //console.log('success');
             }).fail(function(d) {
                 alert('An error ocurred.');
                 $('#lightbox-loading').css('display', 'none');

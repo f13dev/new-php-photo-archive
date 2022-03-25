@@ -25,7 +25,6 @@ class Control
         if (empty($dir)) {
             $dir = '/';
         }
-        //echo '<script>alert("'.$dir.'")</script>';
 
         $m = new \F13Dev\PhotoArchive\Models\Directory();
         $items = $m->get_items($dir);
@@ -162,6 +161,7 @@ class Control
 
         $items = new \stdClass();
         $items->images = $results;
+        $items->parent = '/';
 
         $v = new \F13Dev\PhotoArchive\Views\Photo_archive(array(
             'items' => $items,

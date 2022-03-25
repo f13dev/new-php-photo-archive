@@ -82,7 +82,6 @@ class Photo_archive
                         $v .= '<div id="lightbox-content">';
                         $v .= '</div>';
                     $v .= '</div>';
-                    //$v .= '<div id="lightbox-caption"><span id="showing"></span></b><br><span class="tag">Robyn</span><span class="tag">Baby</span><br><br>DSC03014.JPG<br>03-Feb-2018<br>SONY DSLR-A200<br>1/2000sec<br>f/2.8<br>ISO800<br>10MP</div>';
                     $v .= '<div id="lightbox-caption">';
                         $v .= '<div id="lightbox-caption-text"></div>';
                         if (PHOTO_ARCHIVE_USE_DB) {
@@ -151,21 +150,6 @@ class Photo_archive
             }
         $v .= '</div>';
 
-        /*
-        $v .= '<div class="item">';
-            $v .= '<div class="folder folder-prev"></div>';
-            $v .= '<div class="label">Previous page</div>';
-        $v .= '</div>';
-        $v .= '<div class="item">';
-            $v .= '<div class="folder folder-next"></div>';
-            $v .= '<div class="label">Next page</div>';
-        $v .= '</div>';
-        $v .= '<div class="item">';
-            $v .= '<div class="folder folder-download"></div>';
-            $v .= '<div class="label">Download folder</div>';
-        $v .= '</div>';
-        */
-
         $v .= '<div class="images_container">';
             $total = count((array)$this->items->images);
             foreach ($this->items->images as $image) {
@@ -187,7 +171,6 @@ class Photo_archive
                     >';
                     $v .= '<div class="item">';
                         $v .= '<div class="image" style="background-image: url('.str_replace(' ', '%20', $image['thumb']).');">';
-                            //$v .= '<img class="gallery-image" src="'.$image['thumb'].'" alt="View '.$image['name'].'" />';
                         $v .= '</div>';
                         $v .= '<div class="label">'.$image['name'].'</div>';
                     $v .= '</div>';

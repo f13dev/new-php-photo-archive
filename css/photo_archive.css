@@ -185,8 +185,6 @@ footer {
     height: 100vh;
     top: 0px;
     left: 0px;
-    /*background-color: rgba(255,255,255,0.6);*/
-
     display: none;
 }
 
@@ -312,6 +310,7 @@ footer {
 }
 
 #resync_popup {
+    z-index: 99;
     position: fixed;
     top: 0;
     left: 0;
